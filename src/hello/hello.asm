@@ -14,7 +14,7 @@ _start:
 	mov rsi, hello 		; адрес строки
 	mov rdx, helloLen 	; длина строки
 	syscall
-	mov rax, 60 		; код ошибки 0(все успешно)
-	mov rdi, 0		; системный вызов для exit
+	mov rax, 60		; системный вызов для exit
+	mov rdi, 0		; код ошибки 0(все успешно)
 	syscall 		; выполняю системный вызов
 	
