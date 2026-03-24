@@ -1,56 +1,30 @@
-
 global main
 extern printf
 extern scanf
-	
+section .bss
+	seed resd 1
+	number resd 1
 section .data
-	gameTitle db "Угадай число", 0xa, 0
-	win db "Вы угадали!", 0xa, 0
-	seed dd 1
-	fmti db "%d", 10, 0	
+	fmt db "%u", 0xa, 0
+	fmtout db "%d", 0
+	winout db "Вы выиграли", 0xa, 0
+	sstart db "Угадай число", 0xa, 0
 	range dd 100
-	tst dd 0
-	
+
 section .text
- 
+	
 main:
-	push rbp
-	mov rdi, gameTitle
+	;; game string
+	mov rdi, sstart
 	xor rax, rax
 	call printf
-	pop rbp
-	xor rax, rax
+
+	;; get time
 	
-	call get_random_value
-
-	call game_loop
-	call print_int
-
-	mov rdi, 0
-	mov rax, 60
-	syscall
-
-game_loop:
-	mov rcx, fmti
-	mov rdx, tst
-	
-	call scanf
-	
-	ret
-
-print_int:
-	push rbp
-	mov rdi, fmti
-	mov rsi, [tst]
-	xor rax, rax
-	call printf   	 
- 	pop rbp
-	xor rax, rax
-	ret
-get_random_value:
 	mov rax, 201
 	mov rdi, seed
 	syscall
+	
 
 	mov rax, [seed]
 	shl rax, 13
@@ -73,5 +47,33 @@ get_random_value:
 	div rcx
 	mov [seed], rdx
 	
-	ret
+	mov rdi, fmt
+	mov rsi, [seed]
+	xor rax, rax
+	call printf
+
+loop:
+	mov eax, [seed]
+	mov ebx, [number]
 	
+	cmp eax, ebx
+	je exit
+	push rbp
+	mov rdi, fmtout
+	mov rsi, number
+	call scanf
+	pop rbp
+	
+
+	jmp loop
+	
+exit:		
+	mov rdi, winout
+	xor rax, rax
+	call printf
+
+	mov rdi, 0
+	mov rax, 60
+	syscall
+	
+
